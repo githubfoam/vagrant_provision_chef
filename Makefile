@@ -2,7 +2,7 @@ IMAGE := alpine/fio
 APP:="scripts/usernetes-containerd.sh"
 
 deploy-chef:
-	bash scripts/deploy-saltstack.sh
+	bash scripts/deploy-chef.sh
 
 deploy-boxes:
 	bash scripts/deploy-boxes.sh

@@ -8,4 +8,7 @@ Travis (.com)  branch:
 >vagrant init --template Vagrantfile.provision.chef.erb
 >vagrant up 
 >vagrant ssh 
+
+https://downloads.chef.io/products/chefdk
+https://downloads.chef.io/products/supermarket
 ~~~~

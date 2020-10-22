@@ -1,0 +1,65 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+$docker_script = <<SCRIPT
+echo "192.168.45.1 example.com example" |sudo tee -a /etc/hosts
+echo "192.168.45.2 workstation.example.com workstation" |sudo tee -a /etc/hosts
+echo "192.168.45.3 node-hostname.example.com node-hostname" |sudo tee -a /etc/hosts
+cat /etc/hosts
+echo "nameserver 8.8.8.8 " |sudo tee -a /etc/resolv.conf
+cat /etc/resolv.conf
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.memory = "512"
+    vb.cpus = 1
+  end
+
+  config.vm.define "example" do |webtier|
+      webtier.vm.box = "bento/ubuntu-18.04"
+      webtier.vm.hostname = "example"
+      webtier.vm.network "private_network", ip: "192.168.45.41"
+      webtier.vm.provider "virtualbox" do |vb|
+          vb.name = "vbox-example"
+      end
+
+      #webtier.vm.provision "shell", inline: $docker_script, privileged: false
+      webtier.vm.provision :shell, path: "provisioning/bootstrap-chef-server.sh"
+      webtier.vm.provision "shell", inline: <<-SHELL
+      hostnamectl set-hostname puppet
+      SHELL
+    end
+
+  config.vm.define "workstation" do |webtier|
+      webtier.vm.box = "bento/ubuntu-18.04"
+      webtier.vm.hostname = "workstation"
+      webtier.vm.network "private_network", ip: "192.168.45.42"
+      webtier.vm.provider "virtualbox" do |vb|
+          vb.name = "vbox-workstation"
+      end
+
+      #webtier.vm.provision "shell", inline: $docker_script, privileged: false
+      webtier.vm.provision :shell, path: "provisioning/bootstrap-chef-workstation.sh"
+      webtier.vm.provision "shell", inline: <<-SHELL
+      hostnamectl set-hostname puppet-agent-ubuntu
+      SHELL
+    end
+
+  config.vm.define "node-hostname" do |webtier|
+      webtier.vm.box = "bento/ubuntu-18.04"
+      webtier.vm.hostname = "node-hostname"
+      webtier.vm.network "private_network", ip: "192.168.45.43"
+      webtier.vm.provider "virtualbox" do |vb|
+          vb.name = "vbox-node-hostname"
+      end
+
+      #webtier.vm.provision "shell", inline: $docker_script, privileged: false
+      webtier.vm.provision :shell, path: "provisioning/bootstrap-node.sh"
+      webtier.vm.provision "shell", inline: <<-SHELL
+      hostnamectl set-hostname puppet-agent-centos
+      SHELL
+    end
+
+
+end

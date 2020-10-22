@@ -1,6 +1,9 @@
 IMAGE := alpine/fio
 APP:="scripts/usernetes-containerd.sh"
 
+deploy-topology:
+	bash scripts/deploy-topology.sh
+
 deploy-chef-jenkins:
 	bash scripts/deploy-chef-jenkins.sh
 

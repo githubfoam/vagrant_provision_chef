@@ -8,8 +8,8 @@ matrix:
   fast_finish: true
   include:
 
-    - name: "deploy topology chef provisioning - focal"
-      dist: focal
+    - name: "deploy topology chef provisioning - bionic"
+      dist: bionic
       language: python
       # python: 3.7
       before_install:
